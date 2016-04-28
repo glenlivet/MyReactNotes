@@ -8,6 +8,7 @@ import React, {
   Navigator,
   StyleSheet,
   Text,
+  StatusBar,
   View
 } from 'react-native';
 
@@ -16,6 +17,10 @@ import HomeScreen from './App/Components/HomeScreen';
 import NoteScreen from './App/Components/NoteScreen';
 
 class MyReactNotes extends React.Component {
+  constructor (props) {
+    super(props);
+    StatusBar.setBarStyle('light-content');
+  }
   renderScene (route, navigator) {
     switch(route.name) {
       case 'home':
@@ -36,6 +41,7 @@ class MyReactNotes extends React.Component {
         navigationBar={
           <Navigator.NavigationBar
             routeMapper={NavigationBarRouteMapper}
+            style={styles.navBar}
           />
         }
       />
@@ -51,6 +57,8 @@ var NavigationBarRouteMapper = {
           <SimpleButton 
             onPress={() => navigator.pop()}
             customText='Back'
+            style={styles.navBarLeftButton}
+            textStyle={styles.navBarButtonText}
           />
         );
       default:
@@ -69,6 +77,8 @@ var NavigationBarRouteMapper = {
               });
             }}
             customText='Create Note'
+            style={styles.navBarRightButton}
+            textStyle={styles.navBarButtonText}
           />
         );
       default: 
@@ -80,22 +90,44 @@ var NavigationBarRouteMapper = {
     switch (route.name) {
       case 'home':
         return (
-          <Text>React Notes</Text>
+          <Text style={styles.navBarButtonText}>React Notes</Text>
         );
       case 'createNote':
         return (
-          <Text>Create Note</Text>
+          <Text style={styles.navBarButtonText}>Create Note</Text>
         );
     }
   }
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
+  navContainer: {
+    flex: 1
+  },
+  navBar: {
+    backgroundColor: '#5B29C1',
+    borderBottomColor: '#48209A',
+    borderBottomWidth: 1
+  },
+  navBarTitleText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: '500',
+      marginVertical: 9  // iOS
+   // marginVertical: 16 // Android
+    },
+    navBarLeftButton: {
+      paddingLeft: 10
+    },
+    navBarRightButton: {
+      paddingRight: 10
+    },
+    navBarButtonText: {
+      color: '#EEE',
+      fontSize: 16,
+      marginVertical: 10 // iOS
+   // marginVertical: 16 // Android
+    }
 });
 
 AppRegistry.registerComponent('MyReactNotes', () => MyReactNotes);
