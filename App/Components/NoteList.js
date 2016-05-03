@@ -13,19 +13,27 @@ export default class NoteList extends React.Component {
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
   }
 
+  _onPress(rowData) {
+    this.props.navigator.push({
+      name: 'createNote',
+      note: {
+        id: rowData.id,
+        title: rowData.title,
+        body: rowData.body
+      }
+    });
+  }
+
   render() {
     return (
       <ListView style={styles.listView}
         dataSource={
-          this.ds.cloneWithRows([
-            {title: "Note 1", body: "Body 1", id: 1},
-            {title: "Note 2", body: "Body 2", id: 2}
-          ])
+          this.ds.cloneWithRows(this.props.notes)
         }
         renderRow={(rowData) => {
           return (
             <TouchableHighlight style={styles.listLine}
-              onPress={() => console.log(rowData)}>
+              onPress={() => this._onPress(rowData)}>
               <Text style={styles.textLine}>{rowData.title}</Text>
             </TouchableHighlight>
           )

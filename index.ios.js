@@ -12,6 +12,8 @@ import React, {
   View
 } from 'react-native';
 
+import _ from 'underscore';
+
 import SimpleButton from './App/Components/SimpleButton';
 import HomeScreen from './App/Components/HomeScreen';
 import NoteScreen from './App/Components/NoteScreen';
@@ -20,16 +22,26 @@ class MyReactNotes extends React.Component {
   constructor (props) {
     super(props);
     StatusBar.setBarStyle('light-content');
+    this.state = {
+      selectedNote: {title: "", body: ""},
+      notes: {
+        1: {title: "Note 1", body: "body", id: 1},
+        2: {title: "Note 2", body: "body", id: 2}
+      }
+    };
+    this.renderScene = this.renderScene.bind(this);
   }
   renderScene (route, navigator) {
     switch(route.name) {
       case 'home':
         return (
-          <HomeScreen navigator={navigator} />
+          <HomeScreen navigator={navigator} 
+            notes={_(this.state.notes).toArray()}/>
         );
       case 'createNote':
         return (
-          <NoteScreen />
+          <NoteScreen note={route.note} 
+            onChangeNote={(note) => console.log("note changed", note)}/>
         );
     }
   }
