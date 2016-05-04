@@ -24,19 +24,24 @@ class MyReactNotes extends React.Component {
     super(props);
     StatusBar.setBarStyle('light-content');
     this.state = {
-      selectedNote: {title: "", body: ""},
-      notes: {
-        1: {title: "Note 1", body: "body", id: 1},
-        2: {title: "Note 2", body: "body", id: 2}
-      }
+      selectedNote: {title: "", body: ""}
     };
-    this.renderScene = this.renderScene.bind(this);
+    this.loadNotes();
   }
 
   updateNote(note) {
     var newNotes = Object.assign({}, this.state.notes);
+    note.isSaved = true;
     newNotes[note.id] = note;
     this.setState({notes: newNotes});
+    this.saveNotes(newNotes);
+  }
+
+  deleteNote(note) {
+    var newNotes = Object.assign({}, this.state.notes);
+    delete newNotes[note.id];
+    this.setState({notes: newNotes});
+    this.saveNotes(newNotes);
   }
 
   renderScene (route, navigator) {
@@ -58,15 +63,35 @@ class MyReactNotes extends React.Component {
     return (
       <Navigator
         initialRoute={{name: 'home'}}
-        renderScene={this.renderScene}
+        renderScene={this.renderScene.bind(this)}
         navigationBar={
           <Navigator.NavigationBar
             routeMapper={NavigationBarRouteMapper}
             style={styles.navBar}
           />
         }
+        onDeleteNote={(note) => this.deleteNote(note)}
       />
     );
+  }
+
+  async saveNotes (notes) {
+    try{
+      await AsyncStorage.setItem('@MyReactNotes:notes', JSON.stringify(notes));
+    } catch (err) {
+      console.log('AsyncStorage error: ' + err.message);
+    }
+  }
+
+  async loadNotes () {
+    try{
+      var notes = await AsyncStorage.getItem("@MyReactNotes:notes");
+      if(notes !== null) {
+        this.setState({notes: JSON.parse(notes)});
+      }
+    } catch (err) {
+      console.log('AsyncStorage error: ' + err.message);
+    }
   }
 
   static transitionToCreate (navigator) {
@@ -110,6 +135,24 @@ var NavigationBarRouteMapper = {
             textStyle={styles.navBarButtonText}
           />
         );
+      case 'createNote':
+        if(route.note.isSaved) {
+          return (
+            <SimpleButton
+              onPress={
+                () => {
+                  navigator.props.onDeleteNote(route.note);
+                  navigator.pop();
+                }
+              }
+              customText="Delete"
+              style={styles.navBarRightButton}
+              textStyle={styles.navBarButtonText}
+            />
+          );
+        } else {
+          return null;
+        }
       default: 
         return null;
     }
