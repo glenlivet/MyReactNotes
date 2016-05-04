@@ -9,7 +9,8 @@ import React, {
   StyleSheet,
   Text,
   StatusBar,
-  View
+  View,
+  AsyncStorage
 } from 'react-native';
 
 import _ from 'underscore';
@@ -31,17 +32,25 @@ class MyReactNotes extends React.Component {
     };
     this.renderScene = this.renderScene.bind(this);
   }
+
+  updateNote(note) {
+    var newNotes = Object.assign({}, this.state.notes);
+    newNotes[note.id] = note;
+    this.setState({notes: newNotes});
+  }
+
   renderScene (route, navigator) {
     switch(route.name) {
       case 'home':
         return (
-          <HomeScreen navigator={navigator} 
-            notes={_(this.state.notes).toArray()}/>
+          <HomeScreen navigator={navigator} onCreateButtonClick={MyReactNotes.transitionToCreate}
+            notes={_(this.state.notes).toArray()} 
+            onSelectNote={(note) => navigator.push({name: "createNote", note: note})}/>
         );
       case 'createNote':
         return (
-          <NoteScreen note={route.note} 
-            onChangeNote={(note) => console.log("note changed", note)}/>
+          <NoteScreen note={route.note} navigator={navigator}
+            onChangeNote={(note) => this.updateNote(note)}/>
         );
     }
   }
@@ -59,7 +68,19 @@ class MyReactNotes extends React.Component {
       />
     );
   }
+
+  static transitionToCreate (navigator) {
+    navigator.push({
+      name: 'createNote',
+      note: {
+        id: new Date().getTime(),
+        title: '',
+        body: ''
+      }
+    });
+  }
 }
+
 
 var NavigationBarRouteMapper = {
   LeftButton: function(route, navigator, index, navState){
@@ -83,11 +104,7 @@ var NavigationBarRouteMapper = {
       case 'home':
         return (
           <SimpleButton
-            onPress={() => {
-              navigator.push({
-                name: 'createNote'
-              });
-            }}
+            onPress={() => MyReactNotes.transitionToCreate(navigator)}
             customText='Create Note'
             style={styles.navBarRightButton}
             textStyle={styles.navBarButtonText}
@@ -106,7 +123,7 @@ var NavigationBarRouteMapper = {
         );
       case 'createNote':
         return (
-          <Text style={styles.navBarButtonText}>Create Note</Text>
+          <Text style={styles.navBarButtonText}>{route.note ? route.note.title : 'Create Note'}</Text>
         );
     }
   }

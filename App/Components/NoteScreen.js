@@ -12,10 +12,16 @@ export default class NoteScreen extends React.Component {
     this.state = this.props.note;
   }
 
-  updateNote(title, body) {
+  updateNote(title, body, navigator) {
     var note = Object.assign(this.state, {title: title, body: body});
     this.props.onChangeNote(note);
     this.setState(note);
+    if(navigator) {
+        navigator.replace({
+          name: "createNote",
+          note: note
+        });
+    }
   }
 
   render () {
@@ -31,7 +37,7 @@ export default class NoteScreen extends React.Component {
             onEndEditing={(text)=>{this.refs.body.focus()}}
             underlineColorAndroid="transparent"
             value={this.state.title}
-            onChangeText={(title) => this.updateNote(title, this.state.body)}
+            onChangeText={(title) => this.updateNote(title, this.state.body, this.props.navigator)}
           />
           </View>
         <View style={[styles.inputContainer, styles.body]}>

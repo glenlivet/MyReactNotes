@@ -13,14 +13,12 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <NoteList style={styles.noteList}
-          navigator={this.props.navigator}
+          onSelectNote={this.props.onSelectNote}
           notes={this.props.notes}/>
         <Text style={styles.noNotesText}>You haven't created any notes!</Text>
 
         <SimpleButton 
-          onPress={()=>this.props.navigator.push({
-            name: 'createNote'
-          })}
+          onPress={() => this.props.onCreateButtonClick(this.props.navigator)}
           customText="Create Note"
           style={styles.simpleButton}
           textStyle={styles.simpleButtonText}

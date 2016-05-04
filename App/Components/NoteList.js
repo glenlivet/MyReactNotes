@@ -33,7 +33,8 @@ export default class NoteList extends React.Component {
         renderRow={(rowData) => {
           return (
             <TouchableHighlight style={styles.listLine}
-              onPress={() => this._onPress(rowData)}>
+              onPress={() => this.props.onSelectNote(rowData)}
+              underlayColor="#9E7CE3">
               <Text style={styles.textLine}>{rowData.title}</Text>
             </TouchableHighlight>
           )
