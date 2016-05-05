@@ -43,7 +43,7 @@ export default class NoteList extends React.Component {
             <TouchableHighlight style={styles.listLine}
               onPress={() => this.props.onSelectNote(rowData)}
               underlayColor="#9E7CE3">
-              <Swipeout right={swipeoutButtons}
+              <Swipeout right={swipeoutButtons}>
                 <Text style={styles.textLine}>{rowData.title}</Text>
               </Swipeout>
             </TouchableHighlight>
