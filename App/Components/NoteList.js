@@ -6,6 +6,14 @@ import React, {
   TouchableHighlight
 } from 'react-native';
 
+import Swipeout from 'react-native-swipeout';
+
+var swipeoutButtons = [
+  {
+    text: 'Button'
+  }
+];
+
 export default class NoteList extends React.Component {
   
   constructor (props) {
@@ -35,7 +43,9 @@ export default class NoteList extends React.Component {
             <TouchableHighlight style={styles.listLine}
               onPress={() => this.props.onSelectNote(rowData)}
               underlayColor="#9E7CE3">
-              <Text style={styles.textLine}>{rowData.title}</Text>
+              <Swipeout right={swipeoutButtons}
+                <Text style={styles.textLine}>{rowData.title}</Text>
+              </Swipeout>
             </TouchableHighlight>
           )
         }}
