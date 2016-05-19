@@ -8,12 +8,6 @@ import React, {
 
 import Swipeout from 'react-native-swipeout';
 
-var swipeoutButtons = [
-  {
-    text: 'Button'
-  }
-];
-
 export default class NoteList extends React.Component {
   
   constructor (props) {
@@ -32,7 +26,21 @@ export default class NoteList extends React.Component {
     });
   }
 
+  getSwipeoutButtons (rowData) {
+    let that = this;
+    return [
+      {
+        text: 'Delete',
+        type: 'delete',
+        onPress: function(){
+          that.props.onSwipeDelete(rowData);
+        }
+      }
+    ];
+  }
+
   render() {
+
     return (
       <ListView style={styles.listView}
         dataSource={
@@ -40,13 +48,13 @@ export default class NoteList extends React.Component {
         }
         renderRow={(rowData) => {
           return (
+          <Swipeout autoClose="true" right={this.getSwipeoutButtons.call(this,rowData)} >
             <TouchableHighlight style={styles.listLine}
               onPress={() => this.props.onSelectNote(rowData)}
               underlayColor="#9E7CE3">
-              <Swipeout right={swipeoutButtons}>
                 <Text style={styles.textLine}>{rowData.title}</Text>
-              </Swipeout>
             </TouchableHighlight>
+          </Swipeout>
           )
         }}
       />
@@ -54,14 +62,20 @@ export default class NoteList extends React.Component {
   }
 }
 
-
 var styles = StyleSheet.create({
   listLine: {
     flex: 1,
     flexDirection: 'row',
+    backgroundColor: 'white',
     padding: 10,
     borderBottomColor: '#9E7CE3',
     borderBottomWidth: 1,
+  },
+  swipeout: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: '#FFFFFF'
   },
   textLine: {
     fontSize: 20,

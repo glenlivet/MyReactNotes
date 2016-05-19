@@ -29,8 +29,23 @@ class MyReactNotes extends React.Component {
     this.loadNotes();
   }
 
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchID);
+  }
+  
+  trackLocation() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => this.setState({initialPosition}),
+      (error) => alert(error.message)
+    );
+    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      this.setState({lastPosition});
+    });
+  }
+
   updateNote(note) {
     var newNotes = Object.assign({}, this.state.notes);
+
     note.isSaved = true;
     newNotes[note.id] = note;
     this.setState({notes: newNotes});
@@ -49,7 +64,7 @@ class MyReactNotes extends React.Component {
       case 'home':
         return (
           <HomeScreen navigator={navigator} onCreateButtonClick={MyReactNotes.transitionToCreate}
-            notes={_(this.state.notes).toArray()} 
+            notes={_(this.state.notes).toArray()} onSwipeDelete={(note) => this.deleteNote(note)}
             onSelectNote={(note) => navigator.push({name: "createNote", note: note})}/>
         );
       case 'createNote':

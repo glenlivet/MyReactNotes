@@ -13,6 +13,7 @@ export default class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
         <NoteList style={styles.noteList}
+          onSwipeDelete={this.props.onSwipeDelete}
           onSelectNote={this.props.onSelectNote}
           notes={this.props.notes}/>
         <Text style={styles.noNotesText}>You haven't created any notes!</Text>
