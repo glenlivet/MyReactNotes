@@ -18,15 +18,16 @@ import _ from 'underscore';
 import SimpleButton from './App/Components/SimpleButton';
 import HomeScreen from './App/Components/HomeScreen';
 import NoteScreen from './App/Components/NoteScreen';
+import NoteLocationScreen from './App/Components/NoteLocationScreen';
 
 class MyReactNotes extends React.Component {
   constructor (props) {
     super(props);
     StatusBar.setBarStyle('light-content');
     this.state = {
-      selectedNote: {title: "", body: ""}
     };
     this.loadNotes();
+    this.trackLocation();
   }
 
   componentWillUnmount() {
@@ -45,6 +46,10 @@ class MyReactNotes extends React.Component {
 
   updateNote(note) {
     var newNotes = Object.assign({}, this.state.notes);
+    
+    if (!note.isSaved) {
+      note.location = this.state.lastPosition;
+    }
 
     note.isSaved = true;
     newNotes[note.id] = note;
@@ -71,6 +76,10 @@ class MyReactNotes extends React.Component {
         return (
           <NoteScreen note={route.note} navigator={navigator}
             onChangeNote={(note) => this.updateNote(note)}/>
+        );
+      case 'noteLocations':
+        return (
+          <NoteLocationScreen notes={this.state.notes} onSelectNote={(note) => navigator.push({name:"createNote", note: note})} />
         );
     }
   }
@@ -125,7 +134,17 @@ class MyReactNotes extends React.Component {
 var NavigationBarRouteMapper = {
   LeftButton: function(route, navigator, index, navState){
     switch (route.name) {
+      case 'home':
+        return (
+          <SimpleButton
+            onPress={() => navigator.push({name: 'noteLocations'})}
+            customText='Map'
+            style={styles.navBarLeftButton}
+            textStyle={styles.navBarButtonText}
+           />
+        );
       case 'createNote':
+      case 'noteLocations':
         return (
           <SimpleButton 
             onPress={() => navigator.pop()}
@@ -182,6 +201,10 @@ var NavigationBarRouteMapper = {
       case 'createNote':
         return (
           <Text style={styles.navBarButtonText}>{route.note ? route.note.title : 'Create Note'}</Text>
+        );
+      case 'noteLocations':
+        return (
+          <Text style={styles.navBarTitleText}>Note Locations</Text>
         );
     }
   }
